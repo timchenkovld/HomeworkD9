@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,9 +39,8 @@ public class TimeServlet extends HttpServlet {
         ZoneId zoneId;
         if (encodedTimezone !=null && !encodedTimezone.isEmpty()){
             if (encodedTimezone.contains(" ")){
-                String modifiedTimezone = encodedTimezone.replace(" ", "%2B");
-                resp.addCookie(new Cookie("lastTimezone", modifiedTimezone));
-                String timezone = URLDecoder.decode(modifiedTimezone, StandardCharsets.UTF_8);
+                String timezone = encodedTimezone.replace(" ", "+");
+                resp.addCookie(new Cookie("lastTimezone", timezone));
                 zoneId = ZoneId.of(timezone);
             } else {
                 zoneId = ZoneId.of(encodedTimezone);
