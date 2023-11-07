@@ -42,12 +42,12 @@ public class TimeServlet extends HttpServlet {
         if (encodedTimezone !=null && !encodedTimezone.isEmpty()){
             if (encodedTimezone.contains(" ")){
                 String modifiedTimezone = encodedTimezone.replace(" ", "%2B");
+                resp.addCookie(new Cookie("lastTimezone", modifiedTimezone));
                 String timezone = URLDecoder.decode(modifiedTimezone, StandardCharsets.UTF_8);
                 zoneId = ZoneId.of(timezone);
             } else {
                 zoneId = ZoneId.of(encodedTimezone);
             }
-            resp.addCookie(new Cookie("lastTimezone", encodedTimezone));
         } else {
             zoneId = getTimezoneFromCookie(req);
 
