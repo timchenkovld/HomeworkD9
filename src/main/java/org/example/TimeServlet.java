@@ -3,6 +3,8 @@ package org.example;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
+import org.thymeleaf.web.servlet.JavaxServletWebApplication;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,8 +25,12 @@ public class TimeServlet extends HttpServlet {
     public void init() throws ServletException {
         engine = new TemplateEngine();
 
-        FileTemplateResolver resolver = new FileTemplateResolver();
-        resolver.setPrefix("templates/");
+        JavaxServletWebApplication javaxServletWebApplication = JavaxServletWebApplication
+                .buildApplication(this.getServletContext());
+
+        WebApplicationTemplateResolver resolver = new WebApplicationTemplateResolver(javaxServletWebApplication);
+
+        resolver.setPrefix("/WEB-INF/temp/");
         resolver.setSuffix(".html");
         resolver.setCharacterEncoding("UTF-8");
         resolver.setOrder(engine.getTemplateResolvers().size());
