@@ -26,10 +26,12 @@ public class TimeServlet extends HttpServlet {
         FileTemplateResolver resolver = new FileTemplateResolver();
         resolver.setPrefix("WEB-INF/templates/");
         resolver.setSuffix(".html");
+        resolver.setCharacterEncoding("UTF-8");
         resolver.setOrder(engine.getTemplateResolvers().size());
         resolver.setCacheable(false);
         engine.setTemplateResolver(resolver);
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html; charset=utf-8");
@@ -37,18 +39,14 @@ public class TimeServlet extends HttpServlet {
         String encodedTimezone = req.getParameter("timezone");
 
         ZoneId zoneId;
-        if (encodedTimezone !=null && !encodedTimezone.isEmpty()){
-            if (encodedTimezone.contains(" ")){
-                String timezone = encodedTimezone.replace(" ", "+");
-                resp.addCookie(new Cookie("lastTimezone", timezone));
-                zoneId = ZoneId.of(timezone);
-            } else {
-                zoneId = ZoneId.of(encodedTimezone);
-            }
+        if (encodedTimezone != null && !encodedTimezone.isEmpty()) {
+            String modifiedTimezone = encodedTimezone.replace(" ", "+");
+            resp.addCookie(new Cookie("lastTimezone", modifiedTimezone));
+            zoneId = ZoneId.of(modifiedTimezone);
         } else {
             zoneId = getTimezoneFromCookie(req);
 
-            if (zoneId == null){
+            if (zoneId == null) {
                 zoneId = ZoneId.of("UTC");
             }
         }
@@ -66,9 +64,9 @@ public class TimeServlet extends HttpServlet {
 
     private ZoneId getTimezoneFromCookie(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
-        if (cookies != null){
-            for (Cookie cookie : cookies){
-                if ("lastTimezone".equals(cookie.getName())){
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("lastTimezone".equals(cookie.getName())) {
                     return ZoneId.of(cookie.getValue());
                 }
             }
